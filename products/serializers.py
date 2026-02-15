@@ -1,32 +1,69 @@
 from rest_framework import serializers
 from .models import (
-    Category, Mattress, Furniture, BeddingProduct, 
-    SpecialProduct, CustomFurniture, HeavyDutyProduct, NewArrival
+    MattressCategory, FurnitureCategory, BeddingCategory, SofaCategory,
+    Brand, Mattress, Furniture, BeddingProduct, Sofa,
+    HomeUtility, CustomFurniture, InteriorApplication, Testimonial, OrthopaedicMattress
 )
 
-class CategorySerializer(serializers.ModelSerializer):
+class MattressCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = MattressCategory
+        fields = '__all__'
+
+class FurnitureCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FurnitureCategory
+        fields = '__all__'
+
+class BeddingCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BeddingCategory
+        fields = '__all__'
+
+class SofaCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SofaCategory
+        fields = '__all__'
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
         fields = '__all__'
 
 class MattressSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    brand_name = serializers.CharField(source='brand.name', read_only=True)
+    
     class Meta:
         model = Mattress
         fields = '__all__'
 
+class SofaSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    brand_name = serializers.CharField(source='brand.name', read_only=True)
+    
+    class Meta:
+        model = Sofa
+        fields = '__all__'
+
 class FurnitureSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    brand_name = serializers.CharField(source='brand.name', read_only=True)
+    
     class Meta:
         model = Furniture
         fields = '__all__'
 
 class BeddingProductSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    
     class Meta:
         model = BeddingProduct
         fields = '__all__'
 
-class SpecialProductSerializer(serializers.ModelSerializer):
+class HomeUtilitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = SpecialProduct
+        model = HomeUtility
         fields = '__all__'
 
 class CustomFurnitureSerializer(serializers.ModelSerializer):
@@ -34,12 +71,20 @@ class CustomFurnitureSerializer(serializers.ModelSerializer):
         model = CustomFurniture
         fields = '__all__'
 
-class HeavyDutyProductSerializer(serializers.ModelSerializer):
+class InteriorApplicationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = HeavyDutyProduct
+        model = InteriorApplication
         fields = '__all__'
 
-class NewArrivalSerializer(serializers.ModelSerializer):
+class OrthopaedicMattressSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    brand_name = serializers.CharField(source='brand.name', read_only=True)
+    
     class Meta:
-        model = NewArrival
+        model = OrthopaedicMattress
+        fields = '__all__'
+
+class TestimonialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Testimonial
         fields = '__all__'

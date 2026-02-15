@@ -1,0 +1,27 @@
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments / local packages
+.venv/
+venv/
+env/
+ENV/
+.python-version
+pip-wheel-metadata/
+*.egg-info/
+.eggs/
+
+# Django generated/uploaded assets
+staticfiles/
+media/
+
+# Logs and local runtime
+*.log
+gunicorn.sock
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

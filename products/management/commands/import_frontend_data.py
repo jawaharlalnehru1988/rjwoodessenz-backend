@@ -3,7 +3,7 @@ import re
 from django.core.management.base import BaseCommand
 from products.models import (
     Category, Mattress, Furniture, BeddingProduct, 
-    SpecialProduct, CustomFurniture, HeavyDutyProduct, NewArrival
+    HomeUtility, CustomFurniture, InteriorApplication, NewArrival
 )
 from django.utils.text import slugify
 
@@ -27,13 +27,13 @@ class Command(BaseCommand):
         # 3. Bedding
         self.import_bedding(os.path.join(data_dir, 'bedding.ts'))
         
-        # 4. Special Products
+        # 4. Home Utilities (formerly Special Products)
         self.import_special(os.path.join(data_dir, 'special-products.ts'))
         
         # 5. Custom Furniture
         self.import_custom(os.path.join(data_dir, 'custom-furniture.ts'))
         
-        # 6. Heavy Duty
+        # 6. Interior Applications (formerly Heavy Duty)
         self.import_heavy_duty(os.path.join(data_dir, 'heavy-duty.ts'))
         
         # 7. New Arrivals

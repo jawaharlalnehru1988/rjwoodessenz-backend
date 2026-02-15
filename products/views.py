@@ -1,22 +1,49 @@
 from rest_framework import viewsets
 from .models import (
-    Category, Mattress, Furniture, BeddingProduct, 
-    SpecialProduct, CustomFurniture, HeavyDutyProduct, NewArrival
+    MattressCategory, FurnitureCategory, BeddingCategory, SofaCategory,
+    Brand, Mattress, Furniture, BeddingProduct, Sofa,
+    HomeUtility, CustomFurniture, InteriorApplication, Testimonial, OrthopaedicMattress
 )
 from .serializers import (
-    CategorySerializer, MattressSerializer, FurnitureSerializer, 
-    BeddingProductSerializer, SpecialProductSerializer, 
-    CustomFurnitureSerializer, HeavyDutyProductSerializer, NewArrivalSerializer
+    MattressCategorySerializer, FurnitureCategorySerializer, BeddingCategorySerializer, SofaCategorySerializer,
+    BrandSerializer, MattressSerializer, FurnitureSerializer, SofaSerializer,
+    BeddingProductSerializer, HomeUtilitySerializer,
+    CustomFurnitureSerializer, InteriorApplicationSerializer, TestimonialSerializer, OrthopaedicMattressSerializer
 )
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+class MattressCategoryViewSet(viewsets.ModelViewSet):
+    queryset = MattressCategory.objects.all()
+    serializer_class = MattressCategorySerializer
+    lookup_field = 'slug'
+
+class FurnitureCategoryViewSet(viewsets.ModelViewSet):
+    queryset = FurnitureCategory.objects.all()
+    serializer_class = FurnitureCategorySerializer
+    lookup_field = 'slug'
+
+class BeddingCategoryViewSet(viewsets.ModelViewSet):
+    queryset = BeddingCategory.objects.all()
+    serializer_class = BeddingCategorySerializer
+    lookup_field = 'slug'
+
+class SofaCategoryViewSet(viewsets.ModelViewSet):
+    queryset = SofaCategory.objects.all()
+    serializer_class = SofaCategorySerializer
+    lookup_field = 'slug'
+
+class BrandViewSet(viewsets.ModelViewSet):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer
     lookup_field = 'slug'
 
 class MattressViewSet(viewsets.ModelViewSet):
     queryset = Mattress.objects.all()
     serializer_class = MattressSerializer
+    lookup_field = 'uid'
+
+class SofaViewSet(viewsets.ModelViewSet):
+    queryset = Sofa.objects.all()
+    serializer_class = SofaSerializer
     lookup_field = 'uid'
 
 class FurnitureViewSet(viewsets.ModelViewSet):
@@ -29,9 +56,9 @@ class BeddingProductViewSet(viewsets.ModelViewSet):
     serializer_class = BeddingProductSerializer
     lookup_field = 'uid'
 
-class SpecialProductViewSet(viewsets.ModelViewSet):
-    queryset = SpecialProduct.objects.all()
-    serializer_class = SpecialProductSerializer
+class HomeUtilityViewSet(viewsets.ModelViewSet):
+    queryset = HomeUtility.objects.all()
+    serializer_class = HomeUtilitySerializer
     lookup_field = 'uid'
 
 class CustomFurnitureViewSet(viewsets.ModelViewSet):
@@ -39,12 +66,16 @@ class CustomFurnitureViewSet(viewsets.ModelViewSet):
     serializer_class = CustomFurnitureSerializer
     lookup_field = 'uid'
 
-class HeavyDutyProductViewSet(viewsets.ModelViewSet):
-    queryset = HeavyDutyProduct.objects.all()
-    serializer_class = HeavyDutyProductSerializer
+class InteriorApplicationViewSet(viewsets.ModelViewSet):
+    queryset = InteriorApplication.objects.all()
+    serializer_class = InteriorApplicationSerializer
     lookup_field = 'uid'
 
-class NewArrivalViewSet(viewsets.ModelViewSet):
-    queryset = NewArrival.objects.all()
-    serializer_class = NewArrivalSerializer
+class TestimonialViewSet(viewsets.ModelViewSet):
+    queryset = Testimonial.objects.filter(is_active=True)
+    serializer_class = TestimonialSerializer
+
+class OrthopaedicMattressViewSet(viewsets.ModelViewSet):
+    queryset = OrthopaedicMattress.objects.all()
+    serializer_class = OrthopaedicMattressSerializer
     lookup_field = 'uid'
