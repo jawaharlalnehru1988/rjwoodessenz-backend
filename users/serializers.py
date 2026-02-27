@@ -9,7 +9,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['id', 'user', 'user_type', 'phone', 'delivery_address_line1', 'delivery_address_line2',
-                 'city', 'state', 'postal_code', 'country', 'full_address', 
+                 'city', 'state', 'postal_code', 'country', 'share_location', 'full_address', 
                  'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at', 'user']
 
@@ -35,12 +35,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     state = serializers.CharField(required=False, allow_blank=True)
     postal_code = serializers.CharField(required=False, allow_blank=True)
     country = serializers.CharField(required=False, default='India')
+    share_location = serializers.URLField(required=False, allow_blank=True)
     
     class Meta:
         model = User
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 
                  'user_type', 'phone', 'delivery_address_line1', 'delivery_address_line2',
-                 'city', 'state', 'postal_code', 'country']
+                 'city', 'state', 'postal_code', 'country', 'share_location']
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True},
@@ -69,6 +70,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         state = validated_data.pop('state', '')
         postal_code = validated_data.pop('postal_code', '')
         country = validated_data.pop('country', 'India')
+        share_location = validated_data.pop('share_location', '')
         
         # Create user
         user = User.objects.create_user(**validated_data)
@@ -83,7 +85,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             city=city,
             state=state,
             postal_code=postal_code,
-            country=country
+            country=country,
+            share_location=share_location or None
         )
         
         return user

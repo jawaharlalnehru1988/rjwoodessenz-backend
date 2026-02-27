@@ -204,6 +204,12 @@ class BeddingProduct(models.Model):
     price = models.CharField(max_length=50, blank=True, null=True)
     discount = models.CharField(max_length=50, blank=True, null=True)
     image = models.ImageField(upload_to='products/bedding/', blank=True, null=True)
+    sizes = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        help_text='JSON format: [{"category": "Single", "dimensions": [{"size": "72 x 36", "price": 13500, "original_price": 18000}]}, ...]'
+    )
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):

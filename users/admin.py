@@ -10,7 +10,7 @@ class UserProfileInline(admin.StackedInline):
     verbose_name_plural = 'Profile'
     fk_name = 'user'
     fields = ('user_type', 'phone', 'delivery_address_line1', 'delivery_address_line2', 
-              'city', 'state', 'postal_code', 'country')
+              'city', 'state', 'postal_code', 'country', 'share_location')
 
 
 class CustomUserAdmin(BaseUserAdmin):
@@ -47,7 +47,7 @@ admin.site.register(User, CustomUserAdmin)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'user_type', 'phone', 'city', 'created_at')
     list_filter = ('user_type', 'country', 'state')
-    search_fields = ('user__username', 'user__email', 'phone', 'city')
+    search_fields = ('user__username', 'user__email', 'phone', 'city', 'share_location')
     readonly_fields = ('created_at', 'updated_at')
     
     fieldsets = (
@@ -56,7 +56,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         }),
         ('Delivery Address (For Product Buyers)', {
             'fields': ('delivery_address_line1', 'delivery_address_line2', 'city', 
-                      'state', 'postal_code', 'country'),
+                      'state', 'postal_code', 'country', 'share_location'),
             'description': 'These fields are required only for Product Buying Users'
         }),
         ('Timestamps', {

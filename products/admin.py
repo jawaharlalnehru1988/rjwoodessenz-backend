@@ -52,6 +52,17 @@ class OrthopaedicMattressAdminForm(forms.ModelForm):
         model = OrthopaedicMattress
         fields = "__all__"
 
+class BeddingProductAdminForm(forms.ModelForm):
+    sizes = forms.JSONField(
+        required=False,
+        help_text='Format: [{"category": "Single", "dimensions": [{"size": "72 x 36", "price": 13500, "original_price": 18000}]}]',
+        widget=forms.Textarea(attrs={'rows': 10, 'cols': 80})
+    )
+
+    class Meta:
+        model = BeddingProduct
+        fields = "__all__"
+
 class SofaAdminForm(forms.ModelForm):
     sizes = forms.MultipleChoiceField(
         choices=SOFA_SIZE_CHOICES,
@@ -152,7 +163,8 @@ class BeddingProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'price')
     list_filter = ('category',)
     search_fields = ('name',)
-    fields = ('uid', 'category', 'name', 'price', 'discount', 'image', 'description')
+    form = BeddingProductAdminForm
+    fields = ('uid', 'category', 'name', 'price', 'discount', 'image', 'sizes', 'description')
 
 @admin.register(HomeUtility)
 class HomeUtilityAdmin(admin.ModelAdmin):
