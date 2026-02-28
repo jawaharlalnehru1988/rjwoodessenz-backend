@@ -1,4 +1,7 @@
 from django.db import models
+from django.apps import apps
+from django.db.models.signals import post_delete, pre_save
+from django.dispatch import receiver
 
 # Room Choices
 ROOM_CHOICES = [
@@ -288,3 +291,68 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f"{self.customer_name} - {self.star_rating} stars"
+
+
+def _iter_file_fields(model_class):
+    for field in model_class._meta.fields:
+        if isinstance(field, models.FileField):
+            yield field
+
+
+def _is_file_still_referenced(file_name, exclude_model=None, exclude_pk=None):
+    products_app = apps.get_app_config('products')
+
+    for model_class in products_app.get_models():
+        for field in _iter_file_fields(model_class):
+            query = {field.name: file_name}
+            queryset = model_class.objects.filter(**query)
+
+            if exclude_model is model_class and exclude_pk is not None:
+                queryset = queryset.exclude(pk=exclude_pk)
+
+            if queryset.exists():
+                return True
+
+    return False
+
+
+@receiver(pre_save)
+def delete_replaced_product_media_files(sender, instance, **kwargs):
+    if sender._meta.app_label != 'products' or not instance.pk:
+        return
+
+    try:
+        previous_instance = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        return
+
+    for field in _iter_file_fields(sender):
+        previous_file = getattr(previous_instance, field.name)
+        current_file = getattr(instance, field.name)
+
+        if not previous_file:
+            continue
+
+        previous_name = previous_file.name
+        current_name = current_file.name if current_file else None
+
+        if previous_name and previous_name != current_name:
+            if not _is_file_still_referenced(previous_name, exclude_model=sender, exclude_pk=instance.pk):
+                previous_file.storage.delete(previous_name)
+
+
+@receiver(post_delete)
+def delete_orphan_product_media_files(sender, instance, **kwargs):
+    if sender._meta.app_label != 'products':
+        return
+
+    for field in _iter_file_fields(sender):
+        file_obj = getattr(instance, field.name)
+
+        if not file_obj:
+            continue
+
+        file_name = file_obj.name
+
+        if file_name and not _is_file_still_referenced(file_name):
+            file_obj.storage.delete(file_name)
