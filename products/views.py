@@ -37,7 +37,7 @@ class BrandViewSet(viewsets.ModelViewSet):
     lookup_field = 'slug'
 
 class MattressViewSet(viewsets.ModelViewSet):
-    queryset = Mattress.objects.all()
+    queryset = Mattress.objects.prefetch_related('images').all()
     serializer_class = MattressSerializer
     lookup_field = 'uid'
 

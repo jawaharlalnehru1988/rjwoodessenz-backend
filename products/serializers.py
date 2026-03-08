@@ -2,7 +2,8 @@ from rest_framework import serializers
 from .models import (
     MattressCategory, FurnitureCategory, BeddingCategory, SofaCategory,
     Brand, Mattress, Furniture, BeddingProduct, Sofa,
-    HomeUtility, CustomFurniture, InteriorApplication, Testimonial, OrthopaedicMattress
+    HomeUtility, CustomFurniture, InteriorApplication, Testimonial, OrthopaedicMattress,
+    MattressImage,
 )
 
 class MattressCategorySerializer(serializers.ModelSerializer):
@@ -30,9 +31,16 @@ class BrandSerializer(serializers.ModelSerializer):
         model = Brand
         fields = '__all__'
 
+
+class MattressImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MattressImage
+        fields = ('id', 'image', 'sort_order', 'alt_text')
+
 class MattressSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     brand_name = serializers.CharField(source='brand.name', read_only=True)
+    images = MattressImageSerializer(many=True, read_only=True)
     
     class Meta:
         model = Mattress

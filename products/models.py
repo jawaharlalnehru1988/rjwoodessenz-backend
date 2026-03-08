@@ -119,6 +119,25 @@ class Mattress(models.Model):
     def __str__(self):
         return self.name
 
+
+class MattressImage(models.Model):
+    mattress = models.ForeignKey(
+        Mattress,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+    image = models.ImageField(upload_to='products/mattresses/', blank=False, null=False)
+    sort_order = models.PositiveIntegerField(default=0)
+    alt_text = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ['sort_order', 'id']
+        verbose_name = "Mattress Image"
+        verbose_name_plural = "Mattress Images"
+
+    def __str__(self):
+        return f"{self.mattress.name} - Image {self.id}"
+
 class Sofa(models.Model):
     uid = models.CharField(max_length=50, unique=True)
     category = models.ForeignKey(

@@ -1,9 +1,11 @@
 from django import forms
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import (
     MattressCategory, FurnitureCategory, BeddingCategory, SofaCategory,
     Brand, Mattress, Furniture, BeddingProduct, Sofa,
-    HomeUtility, CustomFurniture, InteriorApplication, Testimonial, OrthopaedicMattress
+    HomeUtility, CustomFurniture, InteriorApplication, Testimonial, OrthopaedicMattress,
+    MattressImage,
 )
 
 
@@ -127,6 +129,26 @@ class BrandAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name',)
 
+class MattressImageInline(admin.TabularInline):
+    model = MattressImage
+    extra = 1
+    fields = ('image_preview', 'image', 'sort_order', 'alt_text')
+    readonly_fields = ('image_preview',)
+    ordering = ('sort_order', 'id')
+    verbose_name = 'Additional Mattress Image'
+    verbose_name_plural = 'Additional Mattress Images (click + Add another Mattress Image)'
+
+    def image_preview(self, obj):
+        if obj and obj.image:
+            return format_html('<a href="{}" target="_blank">{}</a>', obj.image.url, obj.image.name)
+        return '-'
+
+    image_preview.short_description = 'Current image'
+
+    def has_add_permission(self, request, obj=None):
+        return request.user.is_staff
+
+
 @admin.register(Mattress)
 class MattressAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'brand', 'rating')
@@ -134,6 +156,7 @@ class MattressAdmin(admin.ModelAdmin):
     search_fields = ('name', 'brand')
     form = MattressAdminForm
     fields = ('uid', 'category', 'brand', 'name', 'description', 'image', 'sizes', 'rating')
+    inlines = [MattressImageInline]
 
 @admin.register(OrthopaedicMattress)
 class OrthopaedicMattressAdmin(admin.ModelAdmin):
