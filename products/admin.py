@@ -129,34 +129,47 @@ class BrandAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name',)
 
-class MattressImageInline(admin.TabularInline):
+class MattressImageInline(admin.StackedInline):
     model = MattressImage
-    extra = 1
+    extra = 1  # Start with 1 empty form
     fields = ('image_preview', 'image', 'sort_order', 'alt_text')
     readonly_fields = ('image_preview',)
     ordering = ('sort_order', 'id')
-    verbose_name = 'Additional Mattress Image'
-    verbose_name_plural = 'Additional Mattress Images (click + Add another Mattress Image)'
+    verbose_name = 'Mattress Image'
+    verbose_name_plural = '📸 Mattress Gallery Images'
+    classes = ['collapse']  # Allow collapsing
 
     def image_preview(self, obj):
         if obj and obj.image:
-            return format_html('<a href="{}" target="_blank">{}</a>', obj.image.url, obj.image.name)
-        return '-'
+            return format_html(
+                '<div style="margin: 10px 0;"><img src="{}" width="200" height="200" style="object-fit: cover; border-radius: 5px;" /><br/><a href="{}" target="_blank">View full size →</a></div>',
+                obj.image.url,
+                obj.image.url
+            )
+        return '<div style="padding: 20px; background-color: #f0f0f0; text-align: center; border-radius: 5px;"><strong>➕ No image yet - Upload one below</strong></div>'
 
-    image_preview.short_description = 'Current image'
+    image_preview.short_description = 'Current Preview'
 
     def has_add_permission(self, request, obj=None):
-        return request.user.is_staff
+        return True  # Allow adding even when obj is None
 
 
 @admin.register(Mattress)
 class MattressAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'brand', 'rating')
+    list_display = ('name', 'category', 'brand', 'rating', 'image_count')
     list_filter = ('category', 'brand')
     search_fields = ('name', 'brand')
     form = MattressAdminForm
     fields = ('uid', 'category', 'brand', 'name', 'description', 'image', 'sizes', 'rating')
     inlines = [MattressImageInline]
+    
+    def image_count(self, obj):
+        count = obj.images.count()
+        return format_html(
+            '<span style="background-color: #28a745; color: white; padding: 3px 8px; border-radius: 3px; font-weight: bold;">{} 📸</span>',
+            count
+        )
+    image_count.short_description = 'Images'
 
 @admin.register(OrthopaedicMattress)
 class OrthopaedicMattressAdmin(admin.ModelAdmin):
