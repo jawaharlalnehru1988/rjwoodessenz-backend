@@ -129,15 +129,15 @@ class BrandAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name',)
 
-class MattressImageInline(admin.StackedInline):
+class MattressImageInline(admin.TabularInline):
     model = MattressImage
-    extra = 1  # Start with 1 empty form
+    extra = 2  # Show 2 empty forms by default
     fields = ('image_preview', 'image', 'sort_order', 'alt_text')
     readonly_fields = ('image_preview',)
     ordering = ('sort_order', 'id')
-    verbose_name = 'Mattress Image'
-    verbose_name_plural = '📸 Mattress Gallery Images'
-    classes = ['collapse']  # Allow collapsing
+    verbose_name = 'Gallery Image'
+    verbose_name_plural = '📸 Product Gallery (Add Multiple Images)'
+    # classes = ['collapse'] - Removed to make it visible by default
 
     def image_preview(self, obj):
         if obj and obj.image:
@@ -160,7 +160,21 @@ class MattressAdmin(admin.ModelAdmin):
     list_filter = ('category', 'brand')
     search_fields = ('name', 'brand')
     form = MattressAdminForm
-    fields = ('uid', 'category', 'brand', 'name', 'description', 'image', 'sizes', 'rating')
+    
+    fieldsets = (
+        ('Product Basics', {
+            'fields': ('uid', 'name', 'category', 'brand', 'description', 'rating')
+        }),
+        ('Featured Image', {
+            'fields': ('image',),
+            'description': 'This is the main image shown in product listings.'
+        }),
+        ('Pricing & Dimensions', {
+            'fields': ('sizes',),
+            'description': 'Configure various sizes and their prices in JSON format.'
+        }),
+    )
+    
     inlines = [MattressImageInline]
     
     def image_count(self, obj):
@@ -173,11 +187,33 @@ class MattressAdmin(admin.ModelAdmin):
 
 @admin.register(OrthopaedicMattress)
 class OrthopaedicMattressAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'brand', 'rating', 'doctor_recommended', 'featured')
+    list_display = ('name', 'category', 'brand', 'rating', 'doctor_recommended', 'featured', 'image_count')
     list_filter = ('category', 'brand', 'doctor_recommended', 'featured')
     search_fields = ('name', 'brand')
     form = OrthopaedicMattressAdminForm
-    fields = ('uid', 'category', 'brand', 'name', 'description', 'image', 'sizes', 'rating', 'doctor_recommended', 'featured')
+    
+    fieldsets = (
+        ('Product Basics', {
+            'fields': ('uid', 'name', 'category', 'brand', 'description', 'rating', 'doctor_recommended', 'featured')
+        }),
+        ('Featured Image', {
+            'fields': ('image',),
+            'description': 'Main listing image.'
+        }),
+        ('Pricing & Dimensions', {
+            'fields': ('sizes',),
+        }),
+    )
+
+    inlines = [MattressImageInline] # Using same inline as Mattress since it fits
+    
+    def image_count(self, obj):
+        count = obj.images.count()
+        return format_html(
+            '<span style="background-color: #28a745; color: white; padding: 3px 8px; border-radius: 3px; font-weight: bold;">{} 📸</span>',
+            count
+        )
+    image_count.short_description = 'Images'
 
 @admin.register(Sofa)
 class SofaAdmin(admin.ModelAdmin):
@@ -185,7 +221,18 @@ class SofaAdmin(admin.ModelAdmin):
     list_filter = ('category', 'brand')
     search_fields = ('name', 'brand')
     form = SofaAdminForm
-    fields = ('uid', 'category', 'brand', 'name', 'description', 'image', 'pricing_info', 'sizes', 'rating')
+    
+    fieldsets = (
+        ('Product Basics', {
+            'fields': ('uid', 'name', 'category', 'brand', 'description', 'rating', 'pricing_info')
+        }),
+        ('Featured Image', {
+            'fields': ('image',),
+        }),
+        ('Dimensions', {
+            'fields': ('sizes',),
+        }),
+    )
 
 @admin.register(Furniture)
 class FurnitureAdmin(admin.ModelAdmin):
