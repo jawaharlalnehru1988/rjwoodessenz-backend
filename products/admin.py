@@ -158,7 +158,9 @@ class MattressImageInline(admin.TabularInline):
 class MattressAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'brand', 'rating', 'image_count')
     list_filter = ('category', 'brand')
-    search_fields = ('name', 'brand')
+    search_fields = ('name', 'category__name', 'brand__name')
+    search_help_text = 'Search by mattress name, category, or brand (not case-sensitive).'
+    list_per_page = 25
     form = MattressAdminForm
     
     fieldsets = (
@@ -189,7 +191,7 @@ class MattressAdmin(admin.ModelAdmin):
 class OrthopaedicMattressAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'brand', 'rating', 'doctor_recommended', 'featured', 'image_count')
     list_filter = ('category', 'brand', 'doctor_recommended', 'featured')
-    search_fields = ('name', 'brand')
+    search_fields = ('name', 'category__name', 'brand__name')
     form = OrthopaedicMattressAdminForm
     
     fieldsets = (
@@ -219,7 +221,7 @@ class OrthopaedicMattressAdmin(admin.ModelAdmin):
 class SofaAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'brand', 'pricing_info')
     list_filter = ('category', 'brand')
-    search_fields = ('name', 'brand')
+    search_fields = ('name', 'category__name', 'brand__name')
     form = SofaAdminForm
     
     fieldsets = (
